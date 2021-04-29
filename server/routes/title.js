@@ -1,38 +1,37 @@
 const router = require('express').Router();
+const Promise = require('bluebird');
 
 let Title = require('../../db/title.model');
 const mongoose = require('mongoose');
+const saveEnrolled = require('./enrolled').saveEnrolled;
+const exampleDataGenerator = require('../example.data').exampleDataGenerator;
 
-const dataGeneratorFunction = require('../example.data');
+let saveTittle = (cb) => {
+  let tittleData = exampleDataGenerator();
 
-//helper function
-let saveTile = (randomData, cb) => {
-  var titleArray = randomData[0].titleName;
-  var idArray = randomData[0].id;
-  titleArray.forEach((data, index) => {
-    const title = data;
-    const id = String(idArray[index]);
+  Title.insertMany(tittleData)
+    .then((seededData) => cb(null, seededData))
+    .catch((err => cb(err, null)));
+};
 
-    Title.findOne({title: title}, (err, data) => {
-      if (err) { console.log(err); }
-      if (data) {
-        cb(`${title} already exists in db`);
-      } else {
-        const repo = new Title({
-          id,
-          title
-        });
-        repo.save()
-          .then((title) => cb(title))
-          .catch(err => cb(err));
-      }
-    });
-  });
+saveTittle = Promise.promisify(saveTittle);
+
+const seed = async (cb) => {
+  saveTittle()
+    .then((seededTittles) => console.log('seededTittles = ', seededTittles))
+    .catch((err) => console.log('ERROR SEEDING TITTLES = ', err));
+
+  await saveEnrolled()
+    .then((enrolled) => console.log('seeded enrollment = ', enrolled))
+    .catch((err) => console.log('ERROR SEEDING ENROLLMENT = ', err));
+
+  cb('data seeded');
 };
 
 router.route('/getTitle/:id').get((req, res) => {
   Title.find({id: req.params.id})
-    .then(data => {
+    .then((data) => {
+      console.log('data = ', data)
       res.status(200).json(data[0].title);
     })
     .catch(err => res.status(400).json(err));
@@ -41,20 +40,11 @@ router.route('/getTitle/:id').get((req, res) => {
 
 //seeding route
 router.route('/addTitle/:total').post((req, res) => {
-  var titleName = dataGeneratorFunction.exampleDataGenerator(req.params.total);
 
-  saveTile(titleName, (data, err) => {
-    if (err) {
-      res.status(400).json(err);
-    } else {
-      console.log('Titles added successfully', data.title);
-      // mongoose.connection.close();
-    }
+  seed((success) => {
+    res.status(200).json('Data seeded successfully');
   });
-  res.status(200).json('Added title names successfully');
 });
 
 
-
-
-module.exports = router;
+module.exports.router = router;

@@ -3,8 +3,10 @@ var cors = require('cors');
 
 var app = express();
 var bodyParser = require('body-parser');
-var title = require('./routes/title');
-var enrolled = require('./routes/enrolled');
+
+var title = require('./routes/title').router;
+var enrolled = require('./routes/enrolled').router;
+
 const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -48,5 +50,5 @@ app.get('/*', (req, res) => {
 });
 
 app.listen(port, function() {
-  console.log(`Server started and listening on port ${PORT}`);
+  console.log(`Server started and listening on port ${port}`);
 });
