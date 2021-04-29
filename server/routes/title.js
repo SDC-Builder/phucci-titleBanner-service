@@ -40,8 +40,9 @@ router.route('/getTitle/:id').get((req, res) => {
 
 
 //seeding route
-router.route('/addTitle').post((req, res) => {
-  var titleName = dataGeneratorFunction.exampleDataGenerator(req.body.total);
+router.route('/addTitle/:total').post((req, res) => {
+  var titleName = dataGeneratorFunction.exampleDataGenerator(req.params.total);
+
   saveTile(titleName, (data, err) => {
     if (err) {
       res.status(400).json(err);

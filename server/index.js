@@ -1,4 +1,3 @@
-
 var express = require('express');
 var cors = require('cors');
 
@@ -28,8 +27,11 @@ const {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-mongoose.connect(`mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`);
+mongoose.connect('mongodb://localhost:27017/tittle');
+
+
 const db = mongoose.connection;
+
 db.once('open', _ => {
   console.log('Mongo Database connected');
 });
