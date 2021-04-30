@@ -1,36 +1,42 @@
 const faker = require('faker');
-var titleNameCounter = 0;
-var enrolledCounter = 0;
+var titleIdCounter = 0;
+var enrolledIdCounter = 0;
 
-let exampleDataGenerator = (index) => {
-  var titleName = [{
-    id: [],
-    titleName: []
-  }];
-  while (index !== 0) {
-    let title = faker.random.words(2);
-    titleName[0].titleName.push(title);
-    titleNameCounter++;
-    titleName[0].id.push(titleNameCounter);
-    index--;
+let exampleDataGenerator = () => {
+  let totalTittles = 100;
+  let tittleCollection = [];
+
+  while (totalTittles !== 0) {
+    titleIdCounter++;
+
+    let tittle = {
+      id: titleIdCounter,
+      title: faker.random.words(2)
+    };
+
+    tittleCollection.push(tittle);
+    totalTittles--;
   }
 
-  return titleName;
+  return tittleCollection;
 };
 
 let exampleEnrolledGenerator = () => {
-  var diff = titleNameCounter - enrolledCounter;
-  var totalEnrolled = [{
-    id: [],
-    enrolled: []
-  }];
-  while (diff !== 0) {
-    enrolledCounter++;
-    totalEnrolled[0].id.push(enrolledCounter);
-    totalEnrolled[0].enrolled.push(faker.random.number());
-    diff--;
+  let totalEnrollments = 100;
+  let enrolledCollection = [];
+
+  while (totalEnrollments !== 0) {
+    enrolledIdCounter++;
+
+    let enrollment = {
+      id: enrolledIdCounter,
+      enrolled: faker.random.number()
+    };
+
+    enrolledCollection.push(enrollment);
+    totalEnrollments--;
   }
-  return totalEnrolled;
+  return enrolledCollection;
 };
 
 module.exports = {
