@@ -11,21 +11,18 @@ let saveTittle = (cb) => {
 
   Title.insertMany(tittleData)
     .then((seededData) => cb(null, seededData))
-    .catch((err => cb(err, null)));
+    .catch((err => cb(`SEEDING TITTLES ERROR = ${err}`, null)));
 };
 
 saveTittle = Promise.promisify(saveTittle);
 
 const seed = async (cb) => {
-  saveTittle()
-    .then((seededTittles) => console.log('seededTittles = ', seededTittles))
-    .catch((err) => console.log('ERROR SEEDING TITTLES = ', err));
+  try {
+    saveTittle().then((seededTittles) => console.log('seededTittles = ', seededTittles));
+    await saveEnrolled().then((enrolled) => console.log('seeded enrollment = ', enrolled))
+    cb('data seeded');
 
-  await saveEnrolled()
-    .then((enrolled) => console.log('seeded enrollment = ', enrolled))
-    .catch((err) => console.log('ERROR SEEDING ENROLLMENT = ', err));
-
-  cb('data seeded');
+  } catch(e) { }
 };
 
 router.route('/getTitle/:id').get((req, res) => {
@@ -40,10 +37,7 @@ router.route('/getTitle/:id').get((req, res) => {
 
 //seeding route
 router.route('/addTitle/:total').post((req, res) => {
-
-  seed((success) => {
-    res.status(200).json('Data seeded successfully');
-  });
+  seed((success) => res.status(200).json('Data seeded successfully'));
 });
 
 

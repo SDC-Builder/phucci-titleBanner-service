@@ -10,7 +10,7 @@ let saveEnrolled = (cb) => {
 
   Enrolled.insertMany(enrolledData)
     .then((seededEnrolled) => cb(null, seededEnrolled))
-    .catch((err) => cb(err, null));
+    .catch((err) => cb(`SEEDING ENROLLMENTS ERROR = ${err}`, null));
 };
 
 saveEnrolled = Promise.promisify(saveEnrolled);
