@@ -25,18 +25,36 @@ const seed = async (cb) => {
   } catch(e) { }
 };
 
-router.route('/getTitle/:id').get((req, res) => {
-  Title.find({id: req.params.id})
-    .then((data) => {
-      console.log('data = ', data)
-      res.status(200).json(data[0].title);
-    })
-    .catch(err => res.status(400).json(err));
+router.route('/tittle/:id').get(async (req, res) => {
+  try {
+    let record = await Title.find({ id: req.params.id });
+    res.send(record[0].title);;
+
+  } catch(e) { res.status(400).send(`failed to get tittle with id(${req.params.id})`); }
+});
+
+router.route('/tittle/:id').put(async (req, res) => {
+  try {
+    let record = await Title.findOne({ id: req.params.id });
+    record.title = req.body.tittle;
+    await record.save();
+    res.send(`updated tittle with id(${req.params.id}) to "${record.title}"`);
+
+  } catch(e) { res.status(400).send(`failed to update tittle with id(${req.params.id})`); }
+});
+
+router.route('/tittle/:id').delete(async (req, res) => {
+  try {
+    let deletedRecord = await Title.deleteOne({ id: req.params.id });
+    console.log('deletedRecord = ', deletedRecord);
+    res.status(200).send(`deleted tittle with id(${req.params.id})`);
+
+  } catch(e) { res.status(400).send(`failted to delete tittle with id(${req.params.id})`); }
 });
 
 
 //seeding route
-router.route('/addTitle/:total').post((req, res) => {
+router.route('/tittle').post((req, res) => {
   seed((success) => res.status(200).json('Data seeded successfully'));
 });
 

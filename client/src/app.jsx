@@ -8,6 +8,7 @@ import colors from './icons/backgroundImages';
 import Titles from './components/titles.jsx';
 import Enrolled from './components/enrolled.jsx';
 import Stars from './components/totalStars.jsx';
+import request from './lib/request.js';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
