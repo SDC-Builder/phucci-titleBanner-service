@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const Promise = require('bluebird');
+const faker = require('faker');
+
 
 let Title = require('../../db/title.model');
 const mongoose = require('mongoose');
@@ -26,6 +28,28 @@ const seed = async (cb) => {
   } catch(e) { }
 };
 
+let getNextId = (cb) => {
+  Title.find().sort({ _id: -1 }).limit(1)
+    .then((record) => cb(null, record[0]._id + 1))
+    .catch((err) => {
+      console.log('ERROR GETTING MOST RECENT RECORD = ', err);
+      cb(err, null);
+    });
+};
+
+getNextId = Promise.promisify(getNextId);
+
+router.route('/tittle/').post(async (req, res) => {
+
+  let id = await getNextId();
+  let newTittle = { _id: id, title: faker.random.words(2) };
+
+  Title.create(newTittle)
+    .then((insertedData) => res.send(insertedData.title))
+    .catch((err) => res.status(400).send(`failed to get tittle with id(${req.params.id})`));
+});
+
+
 router.route('/tittle/:id').get((req, res) => {
   Title.find({ id: req.params.id })
     .then((record) => res.send(record[0].title))
@@ -46,7 +70,7 @@ router.route('/tittle/:id').delete((req, res) => {
 
 
 //seeding route
-router.route('/tittle').post((req, res) => {
+router.route('/seed').post((req, res) => {
   seed((success) => res.status(200).json('Data seeded successfully'));
 });
 

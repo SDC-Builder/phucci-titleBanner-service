@@ -10,7 +10,7 @@ let exampleDataGenerator = () => {
     titleIdCounter++;
 
     let tittle = {
-      id: titleIdCounter,
+      _id: titleIdCounter,
       title: faker.random.words(2)
     };
 
@@ -29,7 +29,7 @@ let exampleEnrolledGenerator = () => {
     enrolledIdCounter++;
 
     let enrollment = {
-      id: enrolledIdCounter,
+      _id: enrolledIdCounter,
       enrolled: faker.random.number()
     };
 
