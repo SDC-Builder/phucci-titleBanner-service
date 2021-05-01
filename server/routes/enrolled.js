@@ -15,11 +15,26 @@ let saveEnrolled = (cb) => {
 
 saveEnrolled = Promise.promisify(saveEnrolled);
 
-
-router.route('/getEnrolled/:id').get((req, res) => {
+router.route('/enrolled/:id').get((req, res) => {
   Enrolled.find({id: req.params.id})
-    .then(data => res.status(200).json(data[0].enrolled))
-    .catch(err => res.status(404).json(err));
+    .then((data) => res.status(200).json(data[0].enrolled))
+    .catch((err) => res.status(400).send(`failed to get enrollment with id(${req.params.id})`));
+});
+
+router.route('/enrolled/:id').put(async (req, res) => {
+  try {
+    let record = await Enrolled.findOne({ id: req.params.id });
+    record.enrolled = req.body.enrolled;
+    await record.save();
+    res.send(`updated tittle with id(${req.params.id}) to "${record.enrolled}"`);
+
+  } catch(e) { res.status(400).send(`failed to update tittle with id(${req.params.id})`); }
+});
+
+router.route('/enrolled/:id').delete((req, res) => {
+  Enrolled.deleteOne({ id: req.params.id })
+    .then((deleted) => res.status(200).send(`deleted enrollment with id(${req.params.id})`))
+    .catch((e) => res.status(400).send(`failted to delete enrollment with id(${req.params.id})`));
 });
 
 
