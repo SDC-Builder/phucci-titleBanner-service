@@ -6,8 +6,6 @@ const mongoose = require('mongoose');
 const saveEnrolled = require('./enrolled').saveEnrolled;
 const exampleDataGenerator = require('../example.data').exampleDataGenerator;
 
-mongoose.connect('mongodb://localhost:27017/tittle');
-
 
 let saveTittle = (cb) => {
   let tittleData = exampleDataGenerator();
@@ -34,14 +32,10 @@ router.route('/tittle/:id').get((req, res) => {
     .catch((err) => res.status(400).send(`failed to get tittle with id(${req.params.id})`));
 });
 
-router.route('/tittle/:id').put(async (req, res) => {
-  try {
-    let record = await Title.findOne({ id: req.params.id });
-    record.title = req.body.tittle;
-    await record.save();
-    res.send(`updated tittle with id(${req.params.id}) to "${record.title}"`);
-
-  } catch(e) { res.status(400).send(`failed to update tittle with id(${req.params.id})`); }
+router.route('/tittle/:id').put((req, res) => {
+  Title.updateOne({ id: req.params.id })
+    .then((succcess) => res.send(`updated tittle with id(${req.params.id}) to "${req.body.enrolled}"`))
+    .catch((err) => res.status(400).send(`failed to update tittle with id(${req.params.id})`));
 });
 
 router.route('/tittle/:id').delete((req, res) => {

@@ -21,14 +21,10 @@ router.route('/enrolled/:id').get((req, res) => {
     .catch((err) => res.status(400).send(`failed to get enrollment with id(${req.params.id})`));
 });
 
-router.route('/enrolled/:id').put(async (req, res) => {
-  try {
-    let record = await Enrolled.findOne({ id: req.params.id });
-    record.enrolled = req.body.enrolled;
-    await record.save();
-    res.send(`updated enrollment with id(${req.params.id}) to "${record.enrolled}"`);
-
-  } catch(e) { res.status(400).send(`failed to update enrollment with id(${req.params.id})`); }
+router.route('/enrolled/:id').put((req, res) => {
+  Enrolled.updateOne({ id: req.params.id }, { data: req.body.enrolled })
+    .then((succcess) => res.send(`updated enrollment with id(${req.params.id}) to "${req.body.enrolled}"`))
+    .catch((err) => res.status(400).send(`failed to update enrollment with id(${req.params.id})`));
 });
 
 router.route('/enrolled/:id').delete((req, res) => {
