@@ -49,6 +49,12 @@ app.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
-app.listen(port, function() {
-  console.log(`Server started and listening on port ${port}`);
+const server = app.listen(port, function () {
+  console.log(`listenting on port:${port}`);
 });
+
+// app.listen(port, function() {
+//   console.log(`Server started and listening on port ${port}`);
+// });
+
+module.exports = server;

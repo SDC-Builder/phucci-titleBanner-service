@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const saveEnrolled = require('./enrolled').saveEnrolled;
 const exampleDataGenerator = require('../example.data').exampleDataGenerator;
 
+// mongoose.connect('mongodb://localhost:27017/tittle');
 
 let saveTittle = (cb) => {
   let tittleData = exampleDataGenerator();
@@ -51,19 +52,19 @@ router.route('/tittle/').post(async (req, res) => {
 
 
 router.route('/tittle/:id').get((req, res) => {
-  Title.find({ id: req.params.id })
+  Title.find({ _id: req.params.id })
     .then((record) => res.send(record[0].title))
     .catch((err) => res.status(400).send(`failed to get tittle with id(${req.params.id})`));
 });
 
 router.route('/tittle/:id').put((req, res) => {
-  Title.updateOne({ id: req.params.id })
-    .then((succcess) => res.send(`updated tittle with id(${req.params.id}) to "${req.body.enrolled}"`))
+  Title.updateOne({ _id: req.params.id }, { data: req.body.tittle })
+    .then((succcess) => res.send(`updated tittle with id(${req.params.id}) to "${req.body.tittle}"`))
     .catch((err) => res.status(400).send(`failed to update tittle with id(${req.params.id})`));
 });
 
 router.route('/tittle/:id').delete((req, res) => {
-  Title.deleteOne({ id: req.params.id })
+  Title.deleteOne({ _id: req.params.id })
     .then((deleted) => res.status(200).send(`deleted tittle with id(${req.params.id})`))
     .catch((e) => res.status(400).send(`failted to delete tittle with id(${req.params.id})`));
 });

@@ -16,19 +16,19 @@ let saveEnrolled = (cb) => {
 saveEnrolled = Promise.promisify(saveEnrolled);
 
 router.route('/enrolled/:id').get((req, res) => {
-  Enrolled.find({id: req.params.id})
+  Enrolled.find({ _id: req.params.id })
     .then((data) => res.status(200).json(data[0].enrolled))
     .catch((err) => res.status(400).send(`failed to get enrollment with id(${req.params.id})`));
 });
 
 router.route('/enrolled/:id').put((req, res) => {
-  Enrolled.updateOne({ id: req.params.id }, { data: req.body.enrolled })
+  Enrolled.updateOne({ _id: req.params.id }, { data: req.body.enrolled })
     .then((succcess) => res.send(`updated enrollment with id(${req.params.id}) to "${req.body.enrolled}"`))
     .catch((err) => res.status(400).send(`failed to update enrollment with id(${req.params.id})`));
 });
 
 router.route('/enrolled/:id').delete((req, res) => {
-  Enrolled.deleteOne({ id: req.params.id })
+  Enrolled.deleteOne({ _id: req.params.id })
     .then((deleted) => res.status(200).send(`deleted enrollment with id(${req.params.id})`))
     .catch((e) => res.status(400).send(`failted to delete enrollment with id(${req.params.id})`));
 });
