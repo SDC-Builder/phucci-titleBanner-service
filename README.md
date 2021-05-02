@@ -16,6 +16,23 @@
 1. [Requirements](#requirements)
 1. [Development](#development)
 
+## CRUD Operations
+  CREATE:
+   -> POST /api/tittle/
+   -> Request body: { tittle: 'name of tittle' }
+   -> ID of the new tittle is auto-created & auto-incremented
+
+  READ:
+   -> GET /api/tittle/:id
+   -> Returns a string tittle that belongs to the param's id
+
+  UPDATE:
+   -> PUT /api/tittle/:id
+   -> Request body: { tittle: 'new tittle' }
+
+  DELETE:
+   -> DELETE /api/tittle/:id
+
 ## Usage
 
 > Some usage instructions
