@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const router = require('express').Router();
 let Enrolled = require('../../db/enrolled.model');
 const { exampleEnrolledGenerator } = require('../example.data');
+const faker = require('faker');
 
 
 //helper function
@@ -14,6 +15,27 @@ let saveEnrolled = (cb) => {
 };
 
 saveEnrolled = Promise.promisify(saveEnrolled);
+
+let getNextId = (cb) => {
+  Enrolled.find().sort({ _id: -1 }).limit(1)
+    .then((record) => cb(null, record[0]._id + 1))
+    .catch((err) => {
+      console.log('ERROR GETTING MOST RECENT ENROLLMENT = ', err);
+      cb(err, null);
+    });
+};
+
+getNextId = Promise.promisify(getNextId);
+
+router.route('/enrolled/').post(async (req, res) => {
+
+  let id = await getNextId();
+  let newEnrolled = { _id: id, enrolled: faker.random.number() };
+
+  Enrolled.create(newEnrolled)
+    .then((insertedData) => res.send(JSON.stringify(insertedData.enrolled)))
+    .catch((err) => res.status(404).send(`failed to get enrollment with id(${req.params.id})`));
+});
 
 router.route('/enrolled/:id').get((req, res) => {
   Enrolled.find({ _id: req.params.id })
