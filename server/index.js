@@ -38,6 +38,7 @@ db.once('open', _ => {
   console.log('Mongo Database connected');
 });
 
+
 //routes to get and add title
 app.use('/api', title);
 
@@ -53,8 +54,6 @@ const server = app.listen(port, function () {
   console.log(`listenting on port:${port}`);
 });
 
-// app.listen(port, function() {
-//   console.log(`Server started and listening on port ${port}`);
-// });
 
-module.exports = server;
+module.exports.server = server;
+module.exports.mongoose = mongoose;

@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const saveEnrolled = require('./enrolled').saveEnrolled;
 const exampleDataGenerator = require('../example.data').exampleDataGenerator;
 
-// mongoose.connect('mongodb://localhost:27017/tittle');
+mongoose.connect('mongodb://localhost:27017/tittle');
 
 let saveTittle = (cb) => {
   let tittleData = exampleDataGenerator();
@@ -23,11 +23,15 @@ saveTittle = Promise.promisify(saveTittle);
 const seed = async (cb) => {
   try {
     saveTittle().then((seededTittles) => console.log('seededTittles = ', seededTittles));
-    await saveEnrolled().then((enrolled) => console.log('seeded enrollment = ', enrolled))
+    await saveEnrolled().then((enrolled) => console.log('seeded enrollment = ', enrolled));
+    console.log('data successfully seeded');
     cb('data seeded');
 
   } catch(e) { }
 };
+
+let seedIfEmpty = () => Title.findOne({})
+  .then((tittle) => !tittle ? seed() : null);
 
 let getNextId = (cb) => {
   Title.find().sort({ _id: -1 }).limit(1)
@@ -77,3 +81,4 @@ router.route('/seed').post((req, res) => {
 
 
 module.exports.router = router;
+module.exports.seedIfEmpty = seedIfEmpty;
