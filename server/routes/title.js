@@ -1,37 +1,63 @@
 const router = require('express').Router();
 const Promise = require('bluebird');
 const faker = require('faker');
+const axios = require('axios');
+let seedUri = 'http://localhost:3001/api/scaled-seed/';
 
 
 let Title = require('../../db/title.model');
 const mongoose = require('mongoose');
 const saveEnrolled = require('./enrolled').saveEnrolled;
-const exampleDataGenerator = require('../example.data').exampleDataGenerator;
+const generator = require('../example.data');
 
-mongoose.connect('mongodb://localhost:27017/tittle');
 
 let saveTittle = (cb) => {
-  let tittleData = exampleDataGenerator();
+  let tittleData = generator.exampleDataGenerator();
 
   Title.insertMany(tittleData)
     .then((seededData) => cb(null, seededData))
     .catch((err => cb(`SEEDING TITTLES ERROR = ${err}`, null)));
 };
-
 saveTittle = Promise.promisify(saveTittle);
 
-const seed = async (cb) => {
+
+let writeScaledTittles = (currentCounts, cb) => {
+  let tittleData = generator.generateScaledTittles(currentCounts);
+  console.log('writting tittles to db...');
+
+  Title.insertMany(tittleData)
+    .then((seededData) => cb(null, seededData))
+    .catch((err => cb(`SEEDING TITTLES ERROR = ${err}`, null)));
+};
+writeScaledTittles = Promise.promisify(writeScaledTittles);
+
+
+let scaledSeed = async (currentCounts, cb) => {
+  console.time('seed');
+
+  try {
+    await writeScaledTittles(currentCounts).then((seededTittles) => console.log('seededTittles = ', seededTittles));
+    console.timeEnd('seed');
+    console.log('data successfully seeded');
+    cb(null, 'data seeded');
+
+  } catch(e) { cb(e, null); }
+};
+scaledSeed = Promise.promisify(scaledSeed);
+
+
+let seed = async (cb) => {
   try {
     saveTittle().then((seededTittles) => console.log('seededTittles = ', seededTittles));
     await saveEnrolled().then((enrolled) => console.log('seeded enrollment = ', enrolled));
     console.log('data successfully seeded');
-    cb('data seeded');
+    cb(null, 'data seeded');
 
-  } catch(e) { }
+  } catch(e) { cb(e, null); }
 };
+seed = Promise.promisify(seed);
 
-let seedIfEmpty = () => Title.findOne({})
-  .then((tittle) => !tittle ? seed() : null);
+
 
 let getNextId = (cb) => {
   Title.find().sort({ _id: -1 }).limit(1)
@@ -80,5 +106,28 @@ router.route('/seed').post((req, res) => {
 });
 
 
+router.route('/scaled-seed/:counts').post(async (req, res) => {
+
+  let totalTittles = 11000000;
+  if (req.params.counts > totalTittles) { return res.status(200).json(`Exceeded max number of tittles(${totalTittles})`); }
+
+  let lastRecord = await Title.find().sort({ _id: -1 }).limit(1);
+  let currentCounts = lastRecord[0]._id;
+
+  if (currentCounts >= totalTittles) { return res.status(201).json('Data seeded successfully'); }
+  currentCounts = !currentCounts ? 0 : currentCounts;
+
+  scaledSeed(currentCounts, async (success) => {
+    let lastRecord = await Title.find().sort({ _id: -1 }).limit(1);
+    let currentCounts = lastRecord[0]._id;
+
+    if (currentCounts < totalTittles) {
+      res.status(201).json('Data seeded successfully');
+      return axios.post(seedUri += currentCounts);
+    }
+    res.status(201).json('Data seeded successfully');
+  });
+});
+
 module.exports.router = router;
-module.exports.seedIfEmpty = seedIfEmpty;
+module.exports.seed = seed;
