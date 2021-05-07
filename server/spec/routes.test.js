@@ -27,7 +27,8 @@ beforeAll(async (done) => {
 });
 
 afterAll(async (done) => {
-  app.db.connection.db.dropDatabase();
+  await app.db.connection.db.dropDatabase();
+  await app.db.connection.close();
   await app.server.close();
   done();
 });
