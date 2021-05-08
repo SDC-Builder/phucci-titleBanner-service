@@ -2,24 +2,34 @@ const expect = require('chai').expect;
 const axios = require('axios');
 const tittleUri = 'http://localhost:3001/api/tittle';
 const enrolledUri = 'http://localhost:3001/api/enrolled';
-const server = require('./../index.js').server;
-const mongoose = require('./../index.js').mongoose;
+
+const app = require('./../server.js');
+const dbName = 'testTittle';
 
 const Tittle = require('./../../db/title.model');
 const Enrolled = require('./../../db/enrolled.model');
+const seed = require('./../routes/title').seed;
 
 
-const seedIfEmpty = require('./../routes/title').seedIfEmpty;
+app.db.connect(`mongodb://localhost:27017/${dbName}`, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+app.db.connection.once('open', _ => {
+  console.log(`mongo connected to "${dbName} db`);
+});
 
 
 beforeAll(async (done) => {
-  await seedIfEmpty();
+  await seed();
   done();
 });
 
 afterAll(async (done) => {
-  await mongoose.connection.close();
-  await server.close();
+  await app.db.connection.db.dropDatabase();
+  await app.db.connection.close();
+  await app.server.close();
   done();
 });
 
