@@ -109,7 +109,7 @@ router.route('/seed').post((req, res) => {
 router.route('/scaled-seed/:currentCounts').post(async (req, res) => {
 
   let totalTittles = 11000000;
-  if (req.params.counts > totalTittles) { return res.status(200).json(`Exceeded max number of tittles(${totalTittles})`); }
+  if (req.params.currentCounts > totalTittles) { return res.status(400).json(`Exceeded max number of tittles(${totalTittles})`); }
 
   scaledSeed(req.params.currentCounts, async (success) => {
     let lastRecord = await Title.find().sort({ _id: -1 }).limit(1);
