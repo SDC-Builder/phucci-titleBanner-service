@@ -74,8 +74,44 @@ let exampleEnrolledGenerator = () => {
   return enrolledCollection;
 };
 
+const generateTittle = (currentCounts) => {
+  let params = [];
+  let id = currentCounts;
+  let tittle = faker.random.words(2);
+  let enrollments = faker.random.number();
+  params.push(id, tittle, enrollments);
+
+  return params;
+};
+
+const generateCassanInsertQueries = (currentCounts) => {
+  let insertQuery = `INSERT INTO tittle (id, tittle, enrollments) VALUES (?, ?, ?)`;
+
+  console.time('generateInsertQueries');
+  console.log(`generating tittle queries...`);
+
+  // half mil
+  let totalTittles = 1400;
+  let queries = [];
+
+  while (totalTittles !== 0) {
+    currentCounts++;
+
+    queries.push({
+      query: insertQuery,
+      params: generateTittle(currentCounts)
+    });
+
+    totalTittles--;
+  }
+
+  console.timeEnd('generateInsertQueries');
+  return queries;
+};
+
 module.exports = {
   exampleDataGenerator,
   exampleEnrolledGenerator,
-  generateScaledTittles
+  generateScaledTittles,
+  generateCassanInsertQueries
 };
