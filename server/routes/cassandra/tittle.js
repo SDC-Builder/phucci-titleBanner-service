@@ -12,18 +12,18 @@ const generateCassanInsertQueries = require('../../example.data').generateCassan
 
 
 
-let writeScaledTittles = (currentCounts, cb) => {
+let writeScaledTittles = async (currentCounts) => {
   let tittleQueries = generateCassanInsertQueries(currentCounts);
   console.log('writting tittles to db...');
 
-  client.batch(tittleQueries, { prepare: true })
-    .then(() => {
-      let newCounts = Number(currentCounts) + 1400;
-      cb(null, newCounts);
-    })
-    .catch((err) => cb(`SEEDING TITTLES ERROR = ${err}`, null))
+  try {
+    await client.batch(tittleQueries, { prepare: true });
+    let newCounts = Number(currentCounts) + 1400;
+    return Promise.resolve(newCounts);
+  }
+  catch (e) { Promise.reject(`SEEDING TITTLES ERROR = ${e}`); }
 };
-writeScaledTittles = Promise.promisify(writeScaledTittles);
+
 
 const updateCounts = (newCounts) => {
   client.execute(`INSERT INTO counts (id, count)
@@ -43,27 +43,26 @@ const getCounts = async () => {
 };
 
 
-let scaledSeed = async (currentCounts, cb) => {
+let scaledSeed = async (currentCounts) => {
   console.time('seed');
+    try {
+      let newCounts = await writeScaledTittles(currentCounts);
+      console.timeEnd('seed');
+      console.log('data success fully seeded \n');
 
-  try {
-    let newCounts = await writeScaledTittles(currentCounts);
-    console.timeEnd('seed');
-    console.log('data success fully seeded \n');
+      await updateCounts(newCounts);
+      return Promise.resolve(newCounts);
 
-    await updateCounts(newCounts);
-    cb(null, newCounts);
-
-  } catch(e) {
-    console.log('ERROR WRITING TO DB = ', e);
-    cb(e, null);
-  }
+    } catch(e) {
+      console.log('ERROR WRITING TO DB = ', e);
+      return Promise.reject(err)
+    }
 };
-scaledSeed = Promise.promisify(scaledSeed);
+
 
 router.route('/cassandra/scaled-seed/:currentCounts').post((req, res) => {
   console.log('req.params.currentCounts = ', req.params.currentCounts);
-  let totalTittles = 13000000;
+  let totalTittles = 14000000;
 
   if (req.params.currentCounts > totalTittles) { return res.status(400).json(`Exceeded max number of tittles(${totalTittles})`); }
 
