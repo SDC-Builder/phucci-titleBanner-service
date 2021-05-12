@@ -26,9 +26,8 @@ let writeScaledTittles = (currentCounts, cb) => {
 writeScaledTittles = Promise.promisify(writeScaledTittles);
 
 const updateCounts = (newCounts) => {
-  client.execute(`UPDATE counts
-    SET count = ${newCounts}
-    WHERE id = 1;`)
+  client.execute(`INSERT INTO counts (id, count)
+    VALUES (1, ${newCounts})`)
   .then(() => console.log('newCounts updated = ', newCounts))
   .catch((err) => console.log('ERROR UPDATING COUNT = ', err));
 };
