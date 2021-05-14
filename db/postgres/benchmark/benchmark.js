@@ -1,18 +1,12 @@
-const fs = require('fs');
 const path = require('path');
 const db = require('./../index').db;
 const pgp = require('pg-promise')();
+const Promise = require('bluebird');
+const benchMarks = require('./../../benchmarkTools');
 
-const persistBenchmarkRecord = async (benchMarkRecord) => {
-  let fileName = path.join(__dirname, 'benchMarkRecord.js');
-  benchMarkRecord += `module.exports.selectAverage = selectQueriesAverangeInMillis;`
 
-  await fs.writeFile(fileName, benchMarkRecord, (err) => {
-    if (err) { return console.log('ERROR WRITING FILE = ', err); }
-    console.log('Select Queries Average Written to file');
-  })
-};
 
+let fileDir = path.join(__dirname, 'benchMarkRecord.json');
 
 const benchmarkSelectQueries = async (total) => {
 
@@ -23,32 +17,48 @@ const benchmarkSelectQueries = async (total) => {
     let getQuery = `SELECT * FROM tittle WHERE id = ${id += i}`;
 
     let start = Date.now();
-    await db.any(getQuery);
+    let record = await db.any(getQuery);
+    let end = Date.now();
 
+    let time = end - start;
+    totalTime += time;
+  }
+
+  return totalTime / total;
+};
+
+const benchmarkSelectWithOptions = async (total) => {
+
+  let totalTime = 0;
+  let id = 9999000;
+
+  for (let i = 0; i < total; i++) {
+    let getQuery = "SELECT * FROM tittle WHERE title = 'copying Manager' LIMIT 1";
+
+    let start = Date.now();
+    await db.any(getQuery);
     let end = Date.now();;
+
     totalTime += (end - start);
   }
 
-  return totalTime / 1000;
+  return totalTime / total;
 };
 
 
-const benchMarks = async () => {
-
-  let benchMarkRecord = '';
-  let totalSelectQueries = 1000;
-
-  console.time('benchMarks');
-  let selectInMillisAverage = await benchmarkSelectQueries(totalSelectQueries);
-  console.timeEnd('benchMarks');
-
-
-  console.log('averange = ', selectInMillisAverage);
-  benchMarkRecord += `let selectQueriesAverangeInMillis = ${selectInMillisAverage};\n`;
-
-  persistBenchmarkRecord(benchMarkRecord);
+const benchMarkPostgres = async () => {
+  // await benchMarks(benchmarkSelectWithOptions, 3, true, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectQueries, 3, false, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectQueries, 10, false, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectQueries, 100, false, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectQueries, 1000, false, fileDir, 'postgres');
 };
 
 
-benchMarks();
+benchMarkPostgres();
+
+
+
+
 
