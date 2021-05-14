@@ -1,2 +1,2 @@
-let selectQueriesAverangeInMillis = 0.932;
+let selectQueriesAverangeInMillis = 0.4;
 module.exports.selectAverage = selectQueriesAverangeInMillis;

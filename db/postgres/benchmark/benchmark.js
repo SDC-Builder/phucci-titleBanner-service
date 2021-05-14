@@ -1,11 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({
-  contactPoints: ['127.0.0.1'],
-  localDataCenter: 'datacenter1',
-  keyspace: 'tittle'
-});
+const db = require('./../index').db;
+const pgp = require('pg-promise')();
 
 const persistBenchmarkRecord = async (benchMarkRecord) => {
   let fileName = path.join(__dirname, 'benchMarkRecord.js');
@@ -17,6 +13,7 @@ const persistBenchmarkRecord = async (benchMarkRecord) => {
   })
 };
 
+
 const benchmarkSelectQueries = async (total) => {
 
   let totalTime = 0;
@@ -26,7 +23,7 @@ const benchmarkSelectQueries = async (total) => {
     let getQuery = `SELECT * FROM tittle WHERE id = ${id += i}`;
 
     let start = Date.now();
-    let record = await client.execute(getQuery);
+    await db.any(getQuery);
 
     let end = Date.now();;
     totalTime += (end - start);
@@ -35,9 +32,8 @@ const benchmarkSelectQueries = async (total) => {
   return totalTime / 1000;
 };
 
-const benchMarks = async () => {
 
-  await client.connect();
+const benchMarks = async () => {
 
   let benchMarkRecord = '';
   let totalSelectQueries = 1000;
@@ -46,10 +42,13 @@ const benchMarks = async () => {
   let selectInMillisAverage = await benchmarkSelectQueries(totalSelectQueries);
   console.timeEnd('benchMarks');
 
+
   console.log('averange = ', selectInMillisAverage);
   benchMarkRecord += `let selectQueriesAverangeInMillis = ${selectInMillisAverage};\n`;
 
   persistBenchmarkRecord(benchMarkRecord);
 };
 
+
 benchMarks();
+
