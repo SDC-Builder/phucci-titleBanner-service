@@ -90,7 +90,6 @@ const generateCassanInsertQueries = (currentCounts) => {
   console.time('generateInsertQueries');
   console.log(`generating tittle queries...`);
 
-  // half mil
   let totalTittles = 1400;
   let queries = [];
 
@@ -109,9 +108,42 @@ const generateCassanInsertQueries = (currentCounts) => {
   return queries;
 };
 
+
+let generatePostgresTitles = (currentCounts) => {
+
+  console.time('generateTitle');
+  console.log(`generating titles...`);
+
+  // half mil
+  let totalTittles = 500000;
+
+  let titleCollection = [];
+
+  while (totalTittles !== 0) {
+    currentCounts++;
+
+    let tittle = {
+      id: currentCounts,
+      title: faker.random.words(2),
+      enrollments: faker.random.number()
+    };
+
+    titleCollection.push(tittle);
+    totalTittles--;
+  }
+
+  console.timeEnd('generateTitle');
+  // console.log('generated titles = ', titleCollection);
+
+  return titleCollection;
+};
+
+
+
 module.exports = {
   exampleDataGenerator,
   exampleEnrolledGenerator,
   generateScaledTittles,
-  generateCassanInsertQueries
+  generateCassanInsertQueries,
+  generatePostgresTitles
 };

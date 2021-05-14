@@ -21,7 +21,7 @@ let writeScaledTittles = async (currentCounts) => {
     let newCounts = Number(currentCounts) + 1400;
     return Promise.resolve(newCounts);
   }
-  catch (e) { Promise.reject(`SEEDING TITTLES ERROR = ${e}`); }
+  catch (e) { return Promise.reject(`SEEDING TITTLES ERROR = ${e}`); }
 };
 
 
@@ -55,7 +55,7 @@ let scaledSeed = async (currentCounts) => {
 
     } catch(e) {
       console.log('ERROR WRITING TO DB = ', e);
-      return Promise.reject(err)
+      return Promise.reject(e)
     }
 };
 

@@ -27,7 +27,7 @@ const configDb = () => {
       );`
     ))
     .then(() => client.execute(`USE ${database}`))
-    .then(() => console.log(`Key space: "${database}" and table: "${table}" has been created`))
+    .then(() => console.log(`Key space: "${database}" and table: "${table}" has been created for Cassandra`))
     .catch((err) => console.log('ERROR CONFIGURING = ', err));
 }
 
