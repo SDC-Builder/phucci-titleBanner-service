@@ -14,23 +14,30 @@ const fileDir = path.join(__dirname, 'benchMarkRecord.json');
 const benchmarkSelectQueries = async (total) => {
 
   let totalTime = 0;
-  let id = 9999000;
+  let id = 9990000;
+  let getQuery = '';
+  let record;
+
 
   for (let i = 0; i < total; i++) {
-    let getQuery = `SELECT * FROM tittle WHERE id = ${id += i}`;
-
+    getQuery = `SELECT * FROM tittle WHERE id = ${id += 1}`;
     let start = Date.now();
-    let record = await client.execute(getQuery);
+    record = await client.execute(getQuery);
     let end = Date.now();;
     totalTime += (end - start);
   }
 
-  return totalTime / total;
+  return [totalTime / total, getQuery, record.rows[0]];
 };
 
 
-const benchMarkCassandra = () => {
-  benchMarks(benchmarkSelectQueries, 1000, false, fileDir, 'cassandra');
+const benchMarkCassandra = async () => {
+  await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'cassandra');
+  await benchMarks(benchmarkSelectQueries, 3, false, fileDir, 'cassandra');
+  await benchMarks(benchmarkSelectQueries, 10, false, fileDir, 'cassandra');
+  await benchMarks(benchmarkSelectQueries, 100, false, fileDir, 'cassandra');
+  await benchMarks(benchmarkSelectQueries, 1000, false, fileDir, 'cassandra');
+  await benchMarks(benchmarkSelectQueries, 10000, false, fileDir, 'cassandra');
 };
 
 benchMarkCassandra();

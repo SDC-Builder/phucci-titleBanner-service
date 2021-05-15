@@ -18,14 +18,17 @@ const persistBenchmarkRecord = async (timeInMs, option, fileName) => {
 const benchMarks = async (benchmarkQueries, totalQueries, option, fileName, dbName) => {
 
   let start = Date.now();
-  let selectInMillisAverage = await benchmarkQueries(totalQueries);
+  let [selectInMillisAverage, query, record] = await benchmarkQueries(totalQueries);
+
   let end = Date.now();
 
   if (option) {  console.log(`benchmarking ${dbName} for "${totalQueries} queries" (with option)`); }
   if (!option) {  console.log(`benchmarking ${dbName} for "${totalQueries} queries" (without option)`); }
 
+  console.log('last query = ', query);
   console.log(`totalTime =  ${(end - start)} ms`);
   console.log(`average = ${selectInMillisAverage} ms`);
+  console.log('last queried record = ', record);
   console.log('');
 
   Promise.resolve(persistBenchmarkRecord(selectInMillisAverage, option, fileName));

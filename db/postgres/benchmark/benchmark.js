@@ -11,48 +11,52 @@ let fileDir = path.join(__dirname, 'benchMarkRecord.json');
 const benchmarkSelectQueries = async (total) => {
 
   let totalTime = 0;
-  let id = 9999000;
+  let id = 9990000;
+  let getQuery = '';
+  let record;
 
   for (let i = 0; i < total; i++) {
-    let getQuery = `SELECT * FROM tittle WHERE id = ${id += i}`;
+    getQuery = `SELECT * FROM tittle WHERE id = ${id += 1}`;
 
     let start = Date.now();
-    let record = await db.any(getQuery);
+    record = await db.any(getQuery);
     let end = Date.now();
 
     let time = end - start;
     totalTime += time;
   }
 
-  return totalTime / total;
+  return [totalTime / total, getQuery, record[0]];
 };
 
 const benchmarkSelectWithOptions = async (total) => {
 
   let totalTime = 0;
   let id = 9999000;
+  let getQuery = "SELECT * FROM tittle WHERE title = 'copying Manager' LIMIT 1";
+  let record;
 
   for (let i = 0; i < total; i++) {
-    let getQuery = "SELECT * FROM tittle WHERE title = 'copying Manager' LIMIT 1";
 
     let start = Date.now();
-    await db.any(getQuery);
+    record = await db.any(getQuery);
     let end = Date.now();;
 
     totalTime += (end - start);
   }
 
-  return totalTime / total;
+  return [totalTime / total, getQuery, record];
 };
 
 
 const benchMarkPostgres = async () => {
-  // await benchMarks(benchmarkSelectWithOptions, 3, true, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectWithOptions, 3, true, fileDir, 'postgres');
   await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'postgres');
   await benchMarks(benchmarkSelectQueries, 3, false, fileDir, 'postgres');
   await benchMarks(benchmarkSelectQueries, 10, false, fileDir, 'postgres');
   await benchMarks(benchmarkSelectQueries, 100, false, fileDir, 'postgres');
   await benchMarks(benchmarkSelectQueries, 1000, false, fileDir, 'postgres');
+  await benchMarks(benchmarkSelectQueries, 10000, false, fileDir, 'postgres');
 };
 
 
