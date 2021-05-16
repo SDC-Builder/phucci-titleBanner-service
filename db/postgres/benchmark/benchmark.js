@@ -45,6 +45,7 @@ const benchmarkSelectWithOptions = async (total) => {
     totalTime += (end - start);
   }
 
+  console.log('record = ', record);
   return [totalTime / total, getQuery, record];
 };
 

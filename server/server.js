@@ -5,8 +5,8 @@ var cors = require('cors');
 var app = express();
 var bodyParser = require('body-parser');
 
-var title = require('./routes/title').router;
-var enrolled = require('./routes/enrolled').router;
+var title = require('./routes/mongo/title').router;
+var enrolled = require('./routes/mongo/enrolled').router;
 const cassandraTittles = require('./routes/cassandra/tittle').router;
 const postgresTitles = require('./routes/postgres/title').router;
 

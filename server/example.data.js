@@ -49,7 +49,7 @@ let generateScaledTittles = (currentCounts) => {
   }
 
   console.timeEnd('generateTittles');
-  console.log('generated tittles = ', tittleCollection);
+  // console.log('generated tittles = ', tittleCollection);
 
   return tittleCollection;
 };
