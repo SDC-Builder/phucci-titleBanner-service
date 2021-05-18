@@ -12,16 +12,22 @@ const generateCassanInsertQueries = require('../../example.data').generateCassan
 
 
 
-let writeScaledTittles = async (currentCounts) => {
+let scaledSeed = async (currentCounts) => {
+  console.time('seed');
   let tittleQueries = generateCassanInsertQueries(currentCounts);
   console.log('writting tittles to db...');
 
   try {
     await client.batch(tittleQueries, { prepare: true });
     let newCounts = Number(currentCounts) + 1400;
+    await updateCounts(newCounts);
+
+
+    console.timeEnd('seed');
+    console.log('data success fully seeded \n');
     return Promise.resolve(newCounts);
   }
-  catch (e) { Promise.reject(`SEEDING TITTLES ERROR = ${e}`); }
+  catch (e) { return Promise.reject(`SEEDING TITTLES ERROR = ${e}`); }
 };
 
 
@@ -40,23 +46,6 @@ const getCounts = async () => {
 
   let counts = record.rows[0].count.low;
   return counts;
-};
-
-
-let scaledSeed = async (currentCounts) => {
-  console.time('seed');
-    try {
-      let newCounts = await writeScaledTittles(currentCounts);
-      console.timeEnd('seed');
-      console.log('data success fully seeded \n');
-
-      await updateCounts(newCounts);
-      return Promise.resolve(newCounts);
-
-    } catch(e) {
-      console.log('ERROR WRITING TO DB = ', e);
-      return Promise.reject(err)
-    }
 };
 
 

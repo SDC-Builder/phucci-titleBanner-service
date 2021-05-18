@@ -7,47 +7,36 @@ const client = new cassandra.Client({
   keyspace: 'tittle'
 });
 
-const persistBenchmarkRecord = async (benchMarkRecord) => {
-  let fileName = path.join(__dirname, 'benchMarkRecord.js');
-  benchMarkRecord += `module.exports.selectAverage = selectQueriesAverangeInMillis;`
+const benchMarks = require('./../../benchmarkTools');
+const fileDir = path.join(__dirname, 'benchMarkRecord.json');
 
-  await fs.writeFile(fileName, benchMarkRecord, (err) => {
-    if (err) { return console.log('ERROR WRITING FILE = ', err); }
-    console.log('Select Queries Average Written to file');
-  })
-};
 
 const benchmarkSelectQueries = async (total) => {
 
   let totalTime = 0;
-  let id = 9999000;
+  let id = 9990000;
+  let getQuery = '';
+  let record;
+
 
   for (let i = 0; i < total; i++) {
-    let getQuery = `SELECT * FROM tittle WHERE id = ${id += i}`;
-
+    getQuery = `SELECT * FROM tittle WHERE id = ${id += 1}`;
     let start = Date.now();
-    let record = await client.execute(getQuery);
-
+    record = await client.execute(getQuery);
     let end = Date.now();;
     totalTime += (end - start);
-    console.log('get = ', end - start);
   }
 
-  return totalTime / 1000;
+  return [totalTime / total, getQuery, record.rows[0]];
 };
 
-const benchMarks = async () => {
 
-  await client.connect();
-
-  let benchMarkRecord = '';
-  let totalSelectQueries = 1000;
-  let selectInMillisAverage = await benchmarkSelectQueries(totalSelectQueries);
-
-  console.log('averange = ', selectInMillisAverage);
-  benchMarkRecord += `let selectQueriesAverangeInMillis = ${selectInMillisAverage};\n`;
-
-  persistBenchmarkRecord(benchMarkRecord);
+const benchMarkCassandra = async () => {
+  await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'cassandra');
 };
 
-benchMarks();
+
+
+for (let i = 0; i < 2000; i++) {
+  benchMarkCassandra();
+}

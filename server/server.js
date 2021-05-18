@@ -5,15 +5,14 @@ var cors = require('cors');
 var app = express();
 var bodyParser = require('body-parser');
 
-var title = require('./routes/title').router;
-var enrolled = require('./routes/enrolled').router;
+var title = require('./routes/mongo/title').router;
+var enrolled = require('./routes/mongo/enrolled').router;
 const cassandraTittles = require('./routes/cassandra/tittle').router;
+const postgresTitles = require('./routes/postgres/title').router;
 
 const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv');
-
-const cassandraDB = require('./../db/cassandra/index');
 
 
 app.use(express.static(__dirname + '/../client/dist'));
@@ -42,6 +41,8 @@ app.use('/api', title);
 app.use('/api', enrolled);
 
 app.use('/api', cassandraTittles);
+app.use('/api', postgresTitles);
+
 
 app.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'));

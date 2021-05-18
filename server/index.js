@@ -1,6 +1,7 @@
 const db = require('./server').db;
 const port = 3001;
-const configDb = require('./../db/cassandra/index');
+const configCassandra = require('./../db/cassandra/index');
+const connectPostgres = require('./../db/postgres/index').connection;
 
 db.connect('mongodb://localhost:27017/tittle', {
   useNewUrlParser: true,
@@ -11,4 +12,5 @@ db.connection.once('open', _ => {
   console.log('Mongo Database connected to "tittle"');
 });
 
-configDb();
+configCassandra();
+connectPostgres();

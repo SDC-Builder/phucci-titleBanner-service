@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const router = require('express').Router();
-let Enrolled = require('../../db/enrolled.model');
-const { exampleEnrolledGenerator } = require('../example.data');
+let Enrolled = require('../../../db/enrolled.model');
+const { exampleEnrolledGenerator } = require('../../example.data');
 const faker = require('faker');
 
 

@@ -8,7 +8,7 @@ const dbName = 'testTittle';
 
 const Tittle = require('./../../db/title.model');
 const Enrolled = require('./../../db/enrolled.model');
-const seed = require('./../routes/title').seed;
+const seed = require('./../routes/mongo/title').seed;
 
 
 app.db.connect(`mongodb://localhost:27017/${dbName}`, {
