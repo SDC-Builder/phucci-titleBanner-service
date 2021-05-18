@@ -54,6 +54,6 @@ const benchMarkPostgres = async () => {
   await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'postgres');
 };
 
-for (let i = 0; i < 2000; i++) {
+for (let i = 0; i < 1000; i++) {
   benchMarkPostgres();
 }
