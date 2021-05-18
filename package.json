@@ -13,7 +13,10 @@
     "build": "webpack",
     "test": "node_modules/jest/bin/jest.js",
     "test-debug": "jest --detectOpenHandles",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "benchmark-cass": "cd ./db/cassandra/benchmark && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js",
+    "benchmark-post": "cd ./db/postgres/benchmark && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js && node benchmark.js"
+
   },
   "dependencies": {
     "@babel/preset-env": "^7.13.10",
