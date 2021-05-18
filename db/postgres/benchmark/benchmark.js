@@ -51,19 +51,9 @@ const benchmarkSelectWithOptions = async (total) => {
 
 
 const benchMarkPostgres = async () => {
-  await benchMarks(benchmarkSelectWithOptions, 3, true, fileDir, 'postgres');
   await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'postgres');
-  await benchMarks(benchmarkSelectQueries, 3, false, fileDir, 'postgres');
-  await benchMarks(benchmarkSelectQueries, 10, false, fileDir, 'postgres');
-  await benchMarks(benchmarkSelectQueries, 100, false, fileDir, 'postgres');
-  await benchMarks(benchmarkSelectQueries, 1000, false, fileDir, 'postgres');
-  await benchMarks(benchmarkSelectQueries, 10000, false, fileDir, 'postgres');
 };
 
-
-benchMarkPostgres();
-
-
-
-
-
+for (let i = 0; i < 2000; i++) {
+  benchMarkPostgres();
+}

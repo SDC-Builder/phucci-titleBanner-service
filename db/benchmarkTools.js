@@ -31,7 +31,8 @@ const benchMarks = async (benchmarkQueries, totalQueries, option, fileName, dbNa
   console.log('last queried record = ', record);
   console.log('');
 
-  Promise.resolve(persistBenchmarkRecord(selectInMillisAverage, option, fileName));
+  // Promise.resolve(persistBenchmarkRecord(selectInMillisAverage, option, fileName));
+  Promise.resolve();
 };
 
 

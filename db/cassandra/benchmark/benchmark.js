@@ -33,11 +33,10 @@ const benchmarkSelectQueries = async (total) => {
 
 const benchMarkCassandra = async () => {
   await benchMarks(benchmarkSelectQueries, 1, false, fileDir, 'cassandra');
-  await benchMarks(benchmarkSelectQueries, 3, false, fileDir, 'cassandra');
-  await benchMarks(benchmarkSelectQueries, 10, false, fileDir, 'cassandra');
-  await benchMarks(benchmarkSelectQueries, 100, false, fileDir, 'cassandra');
-  await benchMarks(benchmarkSelectQueries, 1000, false, fileDir, 'cassandra');
-  await benchMarks(benchmarkSelectQueries, 10000, false, fileDir, 'cassandra');
 };
 
-benchMarkCassandra();
+
+
+for (let i = 0; i < 2000; i++) {
+  benchMarkCassandra();
+}
