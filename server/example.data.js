@@ -138,6 +138,16 @@ let generatePostgresTitles = (currentCounts) => {
   return titleCollection;
 };
 
+const generateK6Title = (id) => {
+  let title = {
+    id: id,
+    title: faker.random.words(2),
+    enrollments: faker.random.number()
+  };
+
+  return title;
+};
+
 
 
 module.exports = {
@@ -145,5 +155,6 @@ module.exports = {
   exampleEnrolledGenerator,
   generateScaledTittles,
   generateCassanInsertQueries,
-  generatePostgresTitles
+  generatePostgresTitles,
+  generateK6Title
 };

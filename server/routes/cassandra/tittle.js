@@ -3,12 +3,15 @@ const Promise = require('bluebird');
 const axios = require('axios');
 const cassandra = require('cassandra-driver');
 let seedUri = 'http://localhost:3001/api/cassandra/scaled-seed/';
-const client = new cassandra.Client({
-  contactPoints: ['127.0.0.1'],
-  localDataCenter: 'datacenter1',
-  keyspace: 'tittle'
-});
-const generateCassanInsertQueries = require('../../example.data').generateCassanInsertQueries
+let postUri = 'http://localhost:3001/api/title/';
+// const client = new cassandra.Client({
+//   contactPoints: ['127.0.0.1'],
+//   localDataCenter: 'datacenter1',
+//   keyspace: 'tittle'
+// });
+const generateCassanInsertQueries = require('../../example.data').generateCassanInsertQueries;
+const client = require('./../../../db/cassandra/index').db;
+const faker = require('faker');
 
 
 
@@ -47,6 +50,54 @@ const getCounts = async () => {
   let counts = record.rows[0].count.low;
   return counts;
 };
+
+const insert = async (id) => {
+  let queries = [];
+  let insertQuery = `INSERT INTO tittle (id, tittle, enrollments) VALUES (?, ?, ?)`;
+  let updateQuery = 'INSERT INTO counts (id, count) VALUES (?, ?)';
+
+  let title = faker.random.words(2);
+  let enrollments = faker.random.number();
+
+  let insertRecord = { query: insertQuery, params: [id, title, enrollments] };
+  let updateCount = { query: updateQuery, params: [1, id] };
+
+  queries.push(insertRecord, updateCount);
+
+  try {
+    await client.batch(queries, { prepare: true });
+    return Promise.resolve(`New tittle with id "${id} successfully added"`);
+
+  } catch(e) { return `ERROR INSERTING RECORD WITH ID "${id}" = ${e}`; }
+
+};
+
+
+router.route('/title/').post(async (req, res) => {
+  try {
+    // console.log('req.params.id = ', req.params.id);
+    // let response = await insert(req.params.id);
+    // console.log('response = ', response);
+    console.log('req.body = ', req.body);
+    res.send('success');
+
+  } catch(e) {
+    console.log('ERROR POSTING NEW TITLE = ', e);
+    res.status(400);
+    // return axios.post(`${postUri}${req.params.id}`);
+  }
+});
+
+router.route('/title/:id').get(async (req, res) => {
+  console.log('req.params.id = ', req.params.id);
+  let query = 'SELECT * FROM tittle WHERE id = ?';
+  let params = [req.params.id];
+  let response = await client.execute(query, params, { prepare: true });
+  let data = response.rows[0];
+  console.log('response = ', response);
+  console.log('data = ', data);
+});
+
 
 
 router.route('/cassandra/scaled-seed/:currentCounts').post((req, res) => {

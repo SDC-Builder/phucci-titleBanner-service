@@ -1,6 +1,6 @@
 const db = require('./server').db;
 const port = 3001;
-const configCassandra = require('./../db/cassandra/index');
+const configCassandra = require('./../db/cassandra/index').configDb;
 const connectPostgres = require('./../db/postgres/index').connection;
 
 db.connect('mongodb://localhost:27017/tittle', {

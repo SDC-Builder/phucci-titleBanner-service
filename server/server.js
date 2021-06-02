@@ -19,7 +19,7 @@ const dotenv = require('dotenv');
 
 app.use(express.static(__dirname + '/../client/dist'));
 app.use(cors());
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 const port = 3001;
 
@@ -45,7 +45,6 @@ app.use('/api', enrolled);
 
 app.use('/api', cassandraTittles);
 app.use('/api', postgresTitles);
-app.use(morgan('dev'));
 
 
 app.get('/*', (req, res) => {
