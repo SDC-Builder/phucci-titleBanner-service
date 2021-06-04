@@ -4,7 +4,7 @@ import faker from "https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.
 
 export const options = {
   stages: [
-    { duration: "1s", target: 100 },
+    { duration: "1s", target: 1000, rps: 1000},
   ],
   ext: {
     loadimpact: {
@@ -19,14 +19,11 @@ export const options = {
   thresholds: { http_req_duration: ["p(90)<=10000"] },
 };
 
-let id = 10000000;
-
 
 export default function main() {
   let response;
 
   let json = {
-    id: id + __VU,
     title: faker.random.words(2),
     enrollments: faker.random.number(),
   }

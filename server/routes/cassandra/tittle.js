@@ -4,11 +4,6 @@ const axios = require('axios');
 const cassandra = require('cassandra-driver');
 let seedUri = 'http://localhost:3001/api/cassandra/scaled-seed/';
 let postUri = 'http://localhost:3001/api/title/';
-// const client = new cassandra.Client({
-//   contactPoints: ['127.0.0.1'],
-//   localDataCenter: 'datacenter1',
-//   keyspace: 'tittle'
-// });
 const generateCassanInsertQueries = require('../../example.data').generateCassanInsertQueries;
 const client = require('./../../../db/cassandra/index').db;
 const faker = require('faker');
@@ -37,7 +32,7 @@ let scaledSeed = async (currentCounts) => {
 const updateCounts = (newCounts) => {
   client.execute(`INSERT INTO counts (id, count)
     VALUES (1, ${newCounts})`)
-  .then(() => console.log('newCounts updated = ', newCounts))
+  .then(() => newCounts)
   .catch((err) => console.log('ERROR UPDATING COUNT = ', err));
 };
 
@@ -51,40 +46,35 @@ const getCounts = async () => {
   return counts;
 };
 
-const insert = async (id) => {
-  let queries = [];
+let currentCount;
+
+getCounts().then((count) => {
+  currentCount = count;
+  console.log('currentCount = ', currentCount);
+});
+
+
+const insert = async ({ title, enrollments }) => {
   let insertQuery = `INSERT INTO tittle (id, tittle, enrollments) VALUES (?, ?, ?)`;
-  let updateQuery = 'INSERT INTO counts (id, count) VALUES (?, ?)';
+    try {
+      await client.execute(insertQuery, [currentCount += 1, title, enrollments], { prepare: true });
+      updateCounts(currentCount);
+      return Promise.resolve(`New title "${title} successfully added"`);
 
-  let title = faker.random.words(2);
-  let enrollments = faker.random.number();
-
-  let insertRecord = { query: insertQuery, params: [id, title, enrollments] };
-  let updateCount = { query: updateQuery, params: [1, id] };
-
-  queries.push(insertRecord, updateCount);
-
-  try {
-    await client.batch(queries, { prepare: true });
-    return Promise.resolve(`New tittle with id "${id} successfully added"`);
-
-  } catch(e) { return `ERROR INSERTING RECORD WITH ID "${id}" = ${e}`; }
+    } catch(e) { return `ERROR INSERTING RECORD WITH TITLE "${title}" = ${e}`; }
 
 };
 
 
+
 router.route('/title/').post(async (req, res) => {
   try {
-    // console.log('req.params.id = ', req.params.id);
-    // let response = await insert(req.params.id);
-    // console.log('response = ', response);
-    console.log('req.body = ', req.body);
+    let response = await insert(req.body);
     res.send('success');
 
   } catch(e) {
     console.log('ERROR POSTING NEW TITLE = ', e);
     res.status(400);
-    // return axios.post(`${postUri}${req.params.id}`);
   }
 });
 
