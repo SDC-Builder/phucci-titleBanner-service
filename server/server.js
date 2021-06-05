@@ -13,7 +13,7 @@ const cassandraTittles = require('./routes/cassandra/tittle').router;
 const postgresTitles = require('./routes/postgres/title').router;
 
 const mongoose = require('mongoose');
-const path = require('path');
+const path = require('path');``
 const dotenv = require('dotenv');
 
 
@@ -54,6 +54,9 @@ app.get('/*', (req, res) => {
 const server = app.listen(port, function () {
   console.log(`listenting on port:${port}`);
 });
+
+server.keepAliveTimeout = 100000;
+server.headersTimeout = 1000000000;
 
 
 module.exports.server = server;

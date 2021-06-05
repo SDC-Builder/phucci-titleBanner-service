@@ -4,7 +4,7 @@ import faker from "https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.
 
 export const options = {
   stages: [
-    { duration: "1s", target: 1000, rps: 1000},
+    { duration: "1s", target: 1000, rps: 1000 },
   ],
   ext: {
     loadimpact: {
