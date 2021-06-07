@@ -19,9 +19,10 @@ const dotenv = require('dotenv');
 
 app.use(express.static(__dirname + '/../client/dist'));
 app.use(cors());
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 
-const port = 3001;
+const port = process.env.PORT || 3001;
+if (!port) { throw new Error('PORT is not defined'); }
 
 dotenv.config();
 

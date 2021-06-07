@@ -64,7 +64,7 @@ const insert = async ({ title, enrollments }) => {
 };
 
 const getRecord = async (id) => {
-  let query = 'SELECT * FROM tittle WHERE id = 9000000 LIMIT 1';
+  let query = 'SELECT * FROM tittle WHERE id = ? LIMIT 1';
 
   try {
     let response = await client.execute(query, [id], { prepare: true });
@@ -87,8 +87,12 @@ router.route('/title/').post(async (req, res) => {
 
 
 router.route('/title/:id').get(async (req, res) => {
+  console.log('req.params.id = ', req.params.id);
+
   try {
     let data = await getRecord(req.params.id);
+    console.log('data = ', data);
+
     return res.send(data);
 
   } catch(e) {
