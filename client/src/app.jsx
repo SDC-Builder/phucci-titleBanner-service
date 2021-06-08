@@ -44,25 +44,18 @@ class Title extends React.Component {
       var id = uri[uri.length - 1] === '' ? 1 : uri[uri.length - 1];
     }
 
-    axios.get(`http://3.140.219.139/api/getTitle/${id}`)
-      .then(response => {
+    axios.get(`http://localhost:3001/api/title/${id}`)
+      .then((response) => {
         this.setState({
-          titles: response.data
-        });
-      })
-      .catch(err => console.log('Issue with getting course Title', err));
-
-
-    axios.get(`http://3.140.219.139/api/getEnrolled/${id}`)
-      .then(response => {
-        this.setState({
-          totalEnrolled: response.data,
+          titles: response.data.tittle,
+          totalEnrolled: response.data.enrollments,
           month: months[Math.floor(Math.random() * months.length)],
           date: Math.floor(Math.random() * 30),
-          color: colors[Math.floor(Math.random() * colors.length)],
+          color: colors[Math.floor(Math.random() * colors.length)]
         });
+
       })
-      .catch(err => console.log('Error while getting total Enrolled', err));
+      .catch(err => console.log('Issue with getting course Title', err));
 
 
     //get instructors name
