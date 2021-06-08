@@ -22,13 +22,13 @@ class Title extends React.Component {
       num: 0,
       titles: '',
       totalEnrolled: 0,
-      instructor: '',
-      offeredBy: '',
-      img: '',
+      instructor: `Phucci Octocat`,
+      offeredBy: `Phucci University`,
+      img: 'https://image.pngaaa.com/381/1633381-middle.png',
       month: '',
       date: 0,
-      totalReviews: 0,
-      totalStars: 0,
+      totalReviews: 10000,
+      totalStars: 5,
       color: '',
     };
     this.onChange = this.onChange.bind(this);
@@ -177,9 +177,7 @@ class Title extends React.Component {
               <span className = "title-instructorName">
                 {this.state.instructor}
               </span>
-              {this.state.totalEnrolled > 50000 &&
-                <span id="title-top-instructor">Top instructor</span>
-              }
+              <span id="title-top-instructor">Top instructor</span>
             </div>
             <div className="white-box">
               <div className="title-charge"> Enroll for Free</div>
