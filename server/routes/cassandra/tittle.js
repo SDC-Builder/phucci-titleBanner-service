@@ -77,22 +77,18 @@ const getRecord = async (id) => {
 router.route('/title/').post(async (req, res) => {
   try {
     let response = await insert(req.body);
-    res.send('success');
+    return res.send('success');
 
   } catch(e) {
     console.log('ERROR POSTING NEW TITLE = ', e);
-    res.status(400);
+    return res.status(400);
   }
 });
 
 
 router.route('/title/:id').get(async (req, res) => {
-  console.log('req.params.id = ', req.params.id);
-
   try {
     let data = await getRecord(req.params.id);
-    console.log('data = ', data);
-
     return res.send(data);
 
   } catch(e) {
