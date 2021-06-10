@@ -45,10 +45,10 @@ const getCounts = async () => {
 
 let currentCount;
 
-getCounts().then((count) => {
-  currentCount = count;
-  console.log('currentCount = ', currentCount);
-});
+// getCounts().then((count) => {
+//   currentCount = count;
+//   console.log('currentCount = ', currentCount);
+// });
 
 
 const insert = async ({ title, enrollments }) => {
