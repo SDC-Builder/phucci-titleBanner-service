@@ -22,13 +22,13 @@ class Title extends React.Component {
       num: 0,
       titles: '',
       totalEnrolled: 0,
-      instructor: '',
-      offeredBy: '',
-      img: '',
+      instructor: `Phucci Octocat`,
+      offeredBy: `Phucci University`,
+      img: 'https://image.pngaaa.com/381/1633381-middle.png',
       month: '',
       date: 0,
-      totalReviews: 0,
-      totalStars: 0,
+      totalReviews: 10000,
+      totalStars: 5,
       color: '',
     };
     this.onChange = this.onChange.bind(this);
@@ -44,25 +44,18 @@ class Title extends React.Component {
       var id = uri[uri.length - 1] === '' ? 1 : uri[uri.length - 1];
     }
 
-    axios.get(`http://3.140.219.139/api/getTitle/${id}`)
-      .then(response => {
+    axios.get(`http://localhost:3001/api/title/${id}`)
+      .then((response) => {
         this.setState({
-          titles: response.data
-        });
-      })
-      .catch(err => console.log('Issue with getting course Title', err));
-
-
-    axios.get(`http://3.140.219.139/api/getEnrolled/${id}`)
-      .then(response => {
-        this.setState({
-          totalEnrolled: response.data,
+          titles: response.data.tittle,
+          totalEnrolled: response.data.enrollments,
           month: months[Math.floor(Math.random() * months.length)],
           date: Math.floor(Math.random() * 30),
-          color: colors[Math.floor(Math.random() * colors.length)],
+          color: colors[Math.floor(Math.random() * colors.length)]
         });
+
       })
-      .catch(err => console.log('Error while getting total Enrolled', err));
+      .catch(err => console.log('Issue with getting course Title', err));
 
 
     //get instructors name
@@ -184,9 +177,7 @@ class Title extends React.Component {
               <span className = "title-instructorName">
                 {this.state.instructor}
               </span>
-              {this.state.totalEnrolled > 50000 &&
-                <span id="title-top-instructor">Top instructor</span>
-              }
+              <span id="title-top-instructor">Top instructor</span>
             </div>
             <div className="white-box">
               <div className="title-charge"> Enroll for Free</div>

@@ -3,14 +3,9 @@ const Promise = require('bluebird');
 const axios = require('axios');
 const cassandra = require('cassandra-driver');
 let seedUri = 'http://localhost:3001/api/cassandra/scaled-seed/';
-const client = new cassandra.Client({
-  contactPoints: ['127.0.0.1'],
-  localDataCenter: 'datacenter1',
-  keyspace: 'tittle'
-});
-const generateCassanInsertQueries = require('../../example.data').generateCassanInsertQueries
-
-
+const generateCassanInsertQueries = require('../../example.data').generateCassanInsertQueries;
+const client = require('./../../../db/cassandra/index').db;
+const faker = require('faker');
 
 let scaledSeed = async (currentCounts) => {
   console.time('seed');
@@ -34,7 +29,7 @@ let scaledSeed = async (currentCounts) => {
 const updateCounts = (newCounts) => {
   client.execute(`INSERT INTO counts (id, count)
     VALUES (1, ${newCounts})`)
-  .then(() => console.log('newCounts updated = ', newCounts))
+  .then(() => newCounts)
   .catch((err) => console.log('ERROR UPDATING COUNT = ', err));
 };
 
@@ -47,6 +42,60 @@ const getCounts = async () => {
   let counts = record.rows[0].count.low;
   return counts;
 };
+
+let currentCount;
+
+getCounts().then((count) => {
+  currentCount = count;
+  console.log('currentCount = ', currentCount);
+});
+
+
+const insert = async ({ title, enrollments }) => {
+  let insertQuery = `INSERT INTO tittle (id, tittle, enrollments) VALUES (?, ?, ?)`;
+
+  try {
+    await client.execute(insertQuery, [currentCount += 1, title, enrollments], { prepare: true });
+    updateCounts(currentCount);
+    return Promise.resolve(`New title "${title} successfully added"`);
+
+  } catch(e) { return `ERROR INSERTING RECORD WITH TITLE "${title}" = ${e}`; }
+
+};
+
+const getRecord = async (id) => {
+  let query = 'SELECT * FROM tittle WHERE id = ? LIMIT 1';
+
+  try {
+    let response = await client.execute(query, [id], { prepare: true });
+    return Promise.resolve(response.rows[0]);
+
+  } catch(e) { return `ERROR GETTING TITLE = ${e}`; }
+}
+
+
+router.route('/title/').post(async (req, res) => {
+  try {
+    let response = await insert(req.body);
+    return res.send('success');
+
+  } catch(e) {
+    console.log('ERROR POSTING NEW TITLE = ', e);
+    return res.status(400);
+  }
+});
+
+
+router.route('/title/:id').get(async (req, res) => {
+  try {
+    let data = await getRecord(req.params.id);
+    return res.send(data);
+
+  } catch(e) {
+    console.log('ERROR GETTING TITLE = ', e);
+    return res.status(400);
+  }
+});
 
 
 router.route('/cassandra/scaled-seed/:currentCounts').post((req, res) => {

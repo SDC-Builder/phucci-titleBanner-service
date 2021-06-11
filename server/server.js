@@ -1,5 +1,7 @@
+require('newrelic');
 var express = require('express');
 var cors = require('cors');
+const morgan = require('morgan');
 // const helenus = require('helenus');
 
 var app = express();
@@ -11,14 +13,16 @@ const cassandraTittles = require('./routes/cassandra/tittle').router;
 const postgresTitles = require('./routes/postgres/title').router;
 
 const mongoose = require('mongoose');
-const path = require('path');
+const path = require('path');``
 const dotenv = require('dotenv');
 
 
 app.use(express.static(__dirname + '/../client/dist'));
 app.use(cors());
+app.use(morgan('dev'));
 
-const port = 3001;
+const port = process.env.PORT || 3001;
+if (!port) { throw new Error('PORT is not defined'); }
 
 dotenv.config();
 
@@ -51,6 +55,9 @@ app.get('/*', (req, res) => {
 const server = app.listen(port, function () {
   console.log(`listenting on port:${port}`);
 });
+
+server.keepAliveTimeout = 100000;
+server.headersTimeout = 1000000000;
 
 
 module.exports.server = server;

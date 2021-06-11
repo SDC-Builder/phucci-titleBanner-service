@@ -2,6 +2,11 @@ const cassandra = require('cassandra-driver');
 const client = new cassandra.Client({ contactPoints: ['127.0.0.1'], localDataCenter: 'datacenter1' });
 const database = 'tittle';
 const table = 'tittle';
+const db = new cassandra.Client({
+  contactPoints: ['127.0.0.1'],
+  localDataCenter: 'datacenter1',
+  keyspace: 'tittle'
+});
 
 const configDb = () => {
   return client.connect()
@@ -31,4 +36,5 @@ const configDb = () => {
     .catch((err) => console.log('ERROR CONFIGURING = ', err));
 }
 
-module.exports = configDb;
+module.exports.configDb = configDb;
+module.exports.db = db;
