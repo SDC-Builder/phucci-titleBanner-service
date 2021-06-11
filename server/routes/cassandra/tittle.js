@@ -34,21 +34,24 @@ const updateCounts = (newCounts) => {
 };
 
 const getCounts = async () => {
-  let record = await client.execute(`SELECT count
-    FROM counts
-    WHERE id = 1
-    LIMIT 1;`);
+  try {
+    let record = await client.execute(`SELECT count
+      FROM counts
+      WHERE id = 1
+      LIMIT 1;`);
 
-  let counts = record.rows[0].count.low;
-  return counts;
+    let counts = record.rows[0].count.low;
+    return counts;
+
+  } catch (e) { return 0; }
 };
 
 let currentCount;
 
-// getCounts().then((count) => {
-//   currentCount = count;
-//   console.log('currentCount = ', currentCount);
-// });
+getCounts().then((count) => {
+  currentCount = count;
+  console.log('Current Cassandra counts for title table = ', currentCount);
+});
 
 
 const insert = async ({ title, enrollments }) => {
@@ -100,7 +103,7 @@ router.route('/title/:id').get(async (req, res) => {
 
 router.route('/cassandra/scaled-seed/:currentCounts').post((req, res) => {
   console.log('req.params.currentCounts = ', req.params.currentCounts);
-  let totalTittles = 14000000;
+  let totalTittles = 10000000;
 
   if (req.params.currentCounts > totalTittles) { return res.status(400).json(`Exceeded max number of tittles(${totalTittles})`); }
 
