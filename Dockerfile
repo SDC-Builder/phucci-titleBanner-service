@@ -1,13 +1,11 @@
-FROM node:12
- # Create app directory
- WORKDIR /usr/src/app
- # Install app dependencies
- COPY package*.json ./
+FROM node:12 as build
 
- RUN npm install
- # Copy app source code
- COPY . .
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install --only=production
 
- #Expose port and start application
- EXPOSE 3001
- CMD [ "npm", "start" ]
+FROM node:12-alpine
+
+COPY . .
+EXPOSE 3001
+CMD [ "npm", "start" ]
