@@ -44,7 +44,7 @@ class Title extends React.Component {
       var id = uri[uri.length - 1] === '' ? 1 : uri[uri.length - 1];
     }
 
-    axios.get(`http://localhost:3001/api/title/${id}`)
+    axios.get(`api/title/${id}`)
       .then((response) => {
         this.setState({
           titles: response.data.tittle,
