@@ -9,7 +9,8 @@
   },
   "scripts": {
     "react-dev": "webpack --watch",
-    "start": "nodemon ./server/index.js",
+    "start": "node ./server/index.js",
+    "start-dev": "node ./server/index.js",
     "build": "webpack",
     "test": "node_modules/jest/bin/jest.js",
     "test-debug": "jest --detectOpenHandles",
