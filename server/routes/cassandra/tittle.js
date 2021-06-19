@@ -7,6 +7,18 @@ const generateCassanInsertQueries = require('../../example.data').generateCassan
 const client = require('./../../../db/cassandra/index').db;
 const faker = require('faker');
 
+const { promisify } = require("util");
+const redis = require('redis');
+
+const redisClient = redis.createClient({
+  host: '13.57.210.1',
+  port: 6379
+});
+
+const getCache = promisify(redisClient.get).bind(redisClient);
+const setCache = promisify(redisClient.set).bind(redisClient);
+
+
 let scaledSeed = async (currentCounts) => {
   console.time('seed');
   let tittleQueries = generateCassanInsertQueries(currentCounts);
@@ -91,8 +103,12 @@ router.route('/title/').post(async (req, res) => {
 
 router.route('/title/:id').get(async (req, res) => {
   try {
+    const cachedData = await getCache(req.params.id);
+    if (cachedData) { return res.send(cachedData); }
+
     let data = await getRecord(req.params.id);
-    return res.send(data);
+    res.send(data);
+    return setCache(req.params.id, JSON.stringify(data), 'EX', 5);
 
   } catch(e) {
     console.log('ERROR GETTING TITLE = ', e);
