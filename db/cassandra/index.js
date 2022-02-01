@@ -1,12 +1,19 @@
 const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({ contactPoints: ['127.0.0.1'], localDataCenter: 'datacenter1' });
+const client = new cassandra.Client({
+  contactPoints: ['3.101.75.184'],
+  localDataCenter: 'datacenter1',
+  credentials: { username: 'cassandra', password: 'cassandra' }
+});
+
 const database = 'tittle';
 const table = 'tittle';
+
 const db = new cassandra.Client({
-  contactPoints: ['127.0.0.1'],
+  contactPoints: ['3.101.75.184'],
   localDataCenter: 'datacenter1',
   keyspace: 'tittle'
 });
+
 
 const configDb = () => {
   return client.connect()
@@ -31,8 +38,11 @@ const configDb = () => {
         PRIMARY KEY(id)
       );`
     ))
-    .then(() => client.execute(`USE ${database}`))
-    .then(() => console.log(`Key space: "${database}" and table: "${table}" has been created for Cassandra`))
+    .then(() => {
+      console.log(`Key space: "${database}" and table: "${table}" has been created for Cassandra`)
+      return db.connect();
+    })
+    .then(() => console.log('Cassandra db ready for queries'))
     .catch((err) => console.log('ERROR CONFIGURING = ', err));
 }
 
