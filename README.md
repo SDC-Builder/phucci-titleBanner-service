@@ -4,11 +4,10 @@
     - Forked by Phucci
 
 ## Related Projects
-
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
+  - https://github.com/SDC-Builder/phucci-proxy
+  - https://github.com/SDC-Builder/Shane-Syllabus-Service
+  - https://github.com/SDC-Builder/Tim-About-Service
+  - https://github.com/SDC-Builder/Nelson-Review-Service
 
 ## Table of Contents
 
